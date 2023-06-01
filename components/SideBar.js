@@ -1,4 +1,3 @@
-'use client';
 import { Avatar, Button, IconButton } from '@mui/material';
 import ChatIcon from '@mui/icons-material/Chat';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
