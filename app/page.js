@@ -22,7 +22,6 @@ export default function Home() {
         displayName: user.displayName,
       }, { merge: true });
     }
-    console.log(user);
   }, [user]);
 
   if (loading) return <Loading />;
