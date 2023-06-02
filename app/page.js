@@ -8,9 +8,10 @@ import { Login } from "@mui/icons-material";
 import { useEffect } from "react";
 import firebase from "firebase/compat/app";
 import "firebase/firestore"
+import Loading from "@/components/Loading";
 
 export default function Home() {
-  const [user] = useAuthState(auth);
+  const [user, loading] = useAuthState(auth);
 
   useEffect(() => {
     if (user) {
@@ -24,6 +25,7 @@ export default function Home() {
     console.log(user);
   }, [user]);
 
+  if (loading) return <Loading />;
   if (!user) return <Login />;
 
   return (
