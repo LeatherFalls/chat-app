@@ -8,11 +8,17 @@ import { auth, db } from '../firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollection } from 'react-firebase-hooks/firestore';
 import Chat from './Chat';
+import { useEffect } from 'react';
 
 function SideBar() {
   const [user] = useAuthState(auth);
-  const userChatRef = db.collection('chats').where('users', 'array-contains', user.email);
+  const userChatRef = db.collection('chats').where('users', 'array-contains', user?.email);
   const [chatsSnapshot] = useCollection(userChatRef);
+
+  useEffect(() => {
+    console.log(user)
+    console.log(chatsSnapshot?.docs[0].data());
+  }, [chatsSnapshot, user]);
 
   const chatAlreadyExists = (recipientEmail) =>
     !!chatsSnapshot?.docs.find(
