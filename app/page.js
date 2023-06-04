@@ -1,6 +1,6 @@
-'use client';
+'use client'
 
-import SideBar from "@/components/SideBar";
+import SideBar from "../components/SideBar";
 import Head from "next/head";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db } from "../firebase";
@@ -8,7 +8,9 @@ import { Login } from "@mui/icons-material";
 import { useEffect } from "react";
 import firebase from "firebase/compat/app";
 import "firebase/firestore"
-import Loading from "@/components/Loading";
+import Loading from "../components/Loading";
+import 'react-toastify/dist/ReactToastify.css'
+import { ToastContainer } from "react-toastify";
 
 export default function Home() {
   const [user, loading] = useAuthState(auth);
@@ -32,6 +34,7 @@ export default function Home() {
       <Head>
         <title>Chat App</title>
       </Head>
+      <ToastContainer />
       <SideBar />
     </main>
   )

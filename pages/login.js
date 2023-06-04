@@ -1,9 +1,10 @@
 import styled from "styled-components";
 import { Button } from '@mui/material';
 import Head from 'next/head';
-import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../firebase";
 import Image from 'next/image';
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 const Container = styled.div`
   background-color: whitesmoke;
@@ -14,15 +15,24 @@ const Container = styled.div`
 
 const LoginContainer = styled.div`
   align-items: center;
-  background-color: white;
   display: flex;
   flex-direction: column;
   padding: 100px;
 `;
 
 function Login() {
+  const router = useRouter();
+
+  useEffect(() => {
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        router.push("/");
+      }
+    });
+  }, []);
+
   const signIn = () => {
-    signInWithPopup(auth, provider).catch(alert);
+    auth.signInWithPopup(provider).catch(alert);
   };
 
   return (
@@ -39,7 +49,13 @@ function Login() {
           width={200}
           height={200}
         />
-        <Button onClick={signIn} variant="outlined">Sign in with Google</Button>
+        <Button
+          onClick={signIn}
+          variant="outlined"
+          style={{ color: "orange", borderColor: "orange"}}
+        >
+          Sign in with Google
+        </Button>
       </LoginContainer>
     </Container>
   );

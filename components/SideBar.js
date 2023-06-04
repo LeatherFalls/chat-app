@@ -4,40 +4,48 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import SearchIcon from '@mui/icons-material/Search';
 import * as EmailValidator from 'email-validator';
 import styled from 'styled-components';
-import { auth, db } from '../firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollection } from 'react-firebase-hooks/firestore';
+import { app, auth, db } from '../firebase';
 import Chat from './Chat';
-import { useEffect } from 'react';
+import { toast } from 'react-toastify';
+import { getFirestore, collection } from 'firebase/firestore';
+import 'react-toastify/dist/ReactToastify.css';
 
 function SideBar() {
   const [user] = useAuthState(auth);
-  const userChatRef = db.collection('chats').where('users', 'array-contains', user?.email);
-  const [chatsSnapshot] = useCollection(userChatRef);
+  const [chatsSnapshot] = useCollection(
+    collection(getFirestore(app), 'chats'),
+    {
+      snapshotListenOptions: { includeMetadataChanges: true },
+    }
+  );
 
-  useEffect(() => {
-    console.log(user)
-    console.log(chatsSnapshot?.docs[0].data());
-  }, [chatsSnapshot, user]);
-
-  const chatAlreadyExists = (recipientEmail) =>
-    !!chatsSnapshot?.docs.find(
+  const chatAlreadyExists = (recipientEmail) => {
+    const condition = !!chatsSnapshot?.docs.find(
       (chat) =>
         chat.data().users.find((user) => user === recipientEmail)?.length > 0
     );
 
+    if (condition) {
+      toast.error('Chat already exists with this user!');
+    }
+
+    return condition;
+  }
+
   const createChat = () => {
-    const input = prompt('Please enter name for chat');
+    const input = prompt('Please enter an email address for the user you wish to chat with');
     
     if (!input) return null;
 
     if (
       EmailValidator.validate(input) &&
       !chatAlreadyExists(input) &&
-      input !== user.email
+      input !== user?.email
     ) {
       db.collection('chats').add({
-        users: [user.email, input]
+        users: [user?.email, input]
       });
     }
   }
@@ -126,6 +134,7 @@ const SearchInput = styled.input`
 `;
 
 const SideBarButton = styled(Button)`
+  color: orange !important;
   width: 100%;
 `;
 
